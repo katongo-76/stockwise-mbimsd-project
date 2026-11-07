@@ -12,3 +12,4 @@ require_once __DIR__ . '/Helpers/functions.php';
 require_once __DIR__ . '/Services/ExpiryService.php';
 require_once __DIR__ . '/Services/StockCalculationService.php';
 require_once __DIR__ . '/Services/NotificationService.php';
+require_once __DIR__ . '/Services/ForecastService.php';

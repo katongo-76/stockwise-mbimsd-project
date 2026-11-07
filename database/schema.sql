@@ -112,6 +112,56 @@ CREATE TABLE IF NOT EXISTS notifications (
     FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE
 );
 
+-- ────────────────────────────────────────────────────────────────
+-- ML forecasting tables — written nightly by ml/forecast_job.py,
+-- read by public/branch_forecast.php and the manager dashboard.
+-- ────────────────────────────────────────────────────────────────
+-- One row per product: the latest forecast summary written by ml/forecast_job.py.
+CREATE TABLE IF NOT EXISTS forecasts (
+    product_id          INT PRIMARY KEY,
+    branch_id           VARCHAR(64) NOT NULL,
+    generated_at        DATETIME NOT NULL,
+    model               VARCHAR(40) NOT NULL,
+    history_days        INT NOT NULL,
+    avg_daily_demand    DECIMAL(10,2) NOT NULL,
+    forecast_14d        DECIMAL(10,2) NOT NULL,
+    demand_std          DECIMAL(10,2) NOT NULL,
+    sellable_quantity   INT NOT NULL,
+    days_until_stockout DECIMAL(6,1) NULL,
+    stockout_date       DATE NULL,
+    safety_stock        INT NOT NULL,
+    reorder_point       INT NOT NULL,
+    suggested_order_qty INT NOT NULL,
+    status              ENUM('ok', 'reorder', 'critical', 'no_demand') NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE
+);
+
+-- The day-by-day forecast behind each summary (drawn on the Forecast page).
+CREATE TABLE IF NOT EXISTS forecast_daily (
+    product_id    INT NOT NULL,
+    forecast_date DATE NOT NULL,
+    quantity      DECIMAL(10,2) NOT NULL,
+    PRIMARY KEY (product_id, forecast_date),
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- Per batch: how much is expected to sell before its expiry date, and how
+-- much is at risk of expiring unsold (soonest-expiry-first selling assumed).
+CREATE TABLE IF NOT EXISTS forecast_batch_risk (
+    batch_id           INT PRIMARY KEY,
+    product_id         INT NOT NULL,
+    branch_id          VARCHAR(64) NOT NULL,
+    expiry_date        DATE NOT NULL,
+    quantity_remaining INT NOT NULL,
+    expected_sold      INT NOT NULL,
+    at_risk_quantity   INT NOT NULL,
+    generated_at       DATETIME NOT NULL,
+    FOREIGN KEY (batch_id) REFERENCES stock_batches(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE
+);
+
 -- ════════════════════════════════════════════════════════════════
 -- SEED DATA
 -- ════════════════════════════════════════════════════════════════

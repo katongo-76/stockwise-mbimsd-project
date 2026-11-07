@@ -45,6 +45,7 @@ foreach ($branches as $b) {
         'productCount' => (int)($totals['total'] ?? 0),
     ];
 }
+$forecast = ForecastService::available($pdo) ? ForecastService::companySummary($pdo, (int)$user['company_id']) : [];
 $maxStock = max([1, ...array_values(array_map(fn($s) => $s['totalStock'], $branchStats))]);
 
 $pageTitle = 'All Branches — Stockwise';
@@ -107,6 +108,13 @@ require __DIR__ . '/../app/Views/partials/nav_manager.php';
             <div class="progress" style="height:6px;background:var(--border)">
               <div class="progress-bar" style="width:<?= $pct ?>%;background:var(--blue)"></div>
             </div>
+            <?php if (isset($forecast[$b['id']])): $f = $forecast[$b['id']]; ?>
+              <div class="d-flex flex-wrap gap-3 small mt-3 mono">
+                <span style="color:<?= $f['critical'] ? 'var(--red)' : 'var(--text-faint)' ?>"><?= $f['critical'] ?> run out before delivery</span>
+                <span style="color:<?= $f['critical'] + $f['reorder'] ? 'var(--orange)' : 'var(--text-faint)' ?>"><?= $f['critical'] + $f['reorder'] ?> need ordering</span>
+                <span style="color:<?= $f['at_risk'] ? '#A78BFA' : 'var(--text-faint)' ?>"><?= fmt($f['at_risk']) ?> units may expire unsold</span>
+              </div>
+            <?php endif; ?>
             <div class="d-flex justify-content-between small mt-3 pt-2 border-top" style="border-color:var(--border)!important">
               <span class="text-faint mono"><?= $s['productCount'] ?> products</span>
               <span style="color:var(--blue)">View dashboard &rarr;</span>

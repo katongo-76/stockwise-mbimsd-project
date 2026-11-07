@@ -12,6 +12,7 @@ $isManager = $user['role'] === 'manager';
     <?php else: ?>
       <a class="nav-link <?= $active === 'stock' ? 'active' : '' ?>" href="/branch_stock.php?branch=<?= urlencode($branch['id']) ?>">Stock Management</a>
     <?php endif; ?>
+    <a class="nav-link <?= $active === 'forecast' ? 'active' : '' ?>" href="/branch_forecast.php?branch=<?= urlencode($branch['id']) ?>">Forecast</a>
     <a class="nav-link <?= $active === 'expiry' ? 'active' : '' ?>" href="/branch_expiry.php?branch=<?= urlencode($branch['id']) ?>">Expiry</a>
     <a class="nav-link <?= $active === 'alerts' ? 'active' : '' ?>" href="/branch_alerts.php?branch=<?= urlencode($branch['id']) ?>">Low Stock</a>
     <a class="nav-link <?= $active === 'inventory' ? 'active' : '' ?>" href="/branch_inventory.php?branch=<?= urlencode($branch['id']) ?>">Full Inventory</a>

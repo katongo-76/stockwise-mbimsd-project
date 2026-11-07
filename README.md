@@ -1,18 +1,18 @@
-# Stockwise (MBIMSD) v0.6: Sprint 7: forecasting research
+# Stockwise (MBIMSD) v0.7: Sprint 8: forecasting integration
 
 Multi-Branch Inventory Management System and Dashboard. Final year project, Bachelor of Information Technology,
 Zambia University College of Technology. Author: Katongo K. Mwansa.
 
-> This is a staged snapshot of the system at the end of Sprint 7. The complete system is version **v1.0**.
+> This is a staged snapshot of the system at the end of Sprint 8. The complete system is version **v1.0**.
 
 ## What this version contains
 
-- Everything in v0.5, plus the `ml/` folder (Python):
-- Sales history generator with weekly, payday, December and trend patterns (`generate_history.py`)
-- Four forecasting methods: 7-day moving average, same weekday last week, Holt-Winters and a global random forest (`models.py`)
-- Rolling-origin comparison of the methods (`evaluate_models.py`, results in `ml/results/`)
-- Stock calculations: safety stock, reorder point, suggested order, stockout replay (`inventory.py`)
-- Unit tests (`ml/tests/test_ml.py`)
+- Everything in v0.6, plus:
+- Nightly forecast job (`ml/forecast_job.py`) writing 14-day forecasts to the database
+- Forecast page: forecast chart, days left, stockout date, reorder point, suggested order, expiry risk
+- Forecast warnings on the General Manager dashboard
+- Database: + forecasts, forecast_daily and forecast_batch_risk
+- Note: the trained model file arrives in v1.0; until then the job uses Holt-Winters
 
 ## Setup with XAMPP
 
