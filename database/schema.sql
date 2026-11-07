@@ -58,6 +58,43 @@ CREATE TABLE IF NOT EXISTS products (
     FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE
 );
 
+-- ────────────────────────────────────────────────────────────────
+-- Stock batches — one row per delivery. Expiry is tracked PER BATCH,
+-- not per product (FR-III): a product restocked twice has two expiry
+-- dates tracked independently.
+-- ────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS stock_batches (
+    id                 INT AUTO_INCREMENT PRIMARY KEY,
+    product_id         INT NOT NULL,
+    quantity_received  INT NOT NULL,
+    quantity_remaining INT NOT NULL,
+    expiry_date        DATE NULL,
+    received_date      DATE NOT NULL,
+    barcode            VARCHAR(64) NOT NULL DEFAULT '',
+    created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- ────────────────────────────────────────────────────────────────
+-- Transactions — audit log of every stock-in / stock-out / adjustment
+-- (Table 3.1: "INSERT into transactions audit log").
+-- ────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS transactions (
+    id           INT AUTO_INCREMENT PRIMARY KEY,
+    product_id   INT NOT NULL,
+    branch_id    VARCHAR(64) NOT NULL,
+    batch_id     INT NULL,
+    type         ENUM('stock_in', 'stock_out', 'adjustment') NOT NULL,
+    quantity     INT NOT NULL,
+    performed_by INT NULL,
+    source       ENUM('app', 'synthetic') NOT NULL DEFAULT 'app',
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (batch_id) REFERENCES stock_batches(id) ON DELETE SET NULL,
+    FOREIGN KEY (performed_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_transactions_product_date (product_id, type, created_at)
+);
+
 -- ════════════════════════════════════════════════════════════════
 -- SEED DATA
 -- ════════════════════════════════════════════════════════════════
@@ -97,7 +134,22 @@ INSERT INTO products (id, branch_id, name, category, unit_of_measure, current_qu
     (7, 'chifubu', 'Vitamin D3 Capsules', 'Health', 'unit', 220, 50, 14),
     (8, 'chifubu', 'Ibuprofen 200mg x50', 'Health', 'unit', 40, 20, 14);
 
+INSERT INTO stock_batches (product_id, quantity_received, quantity_remaining, expiry_date, received_date, barcode) VALUES
+    (1, 42, 42, NULL, DATE_SUB(CURDATE(), INTERVAL 40 DAY), '012000001234'),
+    (2, 67, 67, NULL, DATE_SUB(CURDATE(), INTERVAL 35 DAY), '012000004563'),
+    (3, 210, 210, NULL, DATE_SUB(CURDATE(), INTERVAL 60 DAY), '020000001122'),
+    (4, 60, 60, DATE_ADD(CURDATE(), INTERVAL 120 DAY), DATE_SUB(CURDATE(), INTERVAL 10 DAY), '030000001011'),
+    (4, 35, 35, DATE_ADD(CURDATE(), INTERVAL 12 DAY), DATE_SUB(CURDATE(), INTERVAL 30 DAY), '030000001012'),
+    (5, 24, 24, DATE_ADD(CURDATE(), INTERVAL 5 DAY), DATE_SUB(CURDATE(), INTERVAL 20 DAY), '030000004044'),
+    (6, 34, 34, NULL, DATE_SUB(CURDATE(), INTERVAL 90 DAY), '040000001001'),
+    (7, 220, 220, DATE_ADD(CURDATE(), INTERVAL 500 DAY), DATE_SUB(CURDATE(), INTERVAL 45 DAY), '080000001001'),
+    (8, 40, 40, DATE_SUB(CURDATE(), INTERVAL 3 DAY), DATE_SUB(CURDATE(), INTERVAL 80 DAY), '080000003003');
 
+INSERT INTO transactions (product_id, branch_id, batch_id, type, quantity, performed_by) VALUES
+    (1, 'chifubu', 1, 'stock_in', 42, 2),
+    (4, 'chifubu', 4, 'stock_in', 60, 2),
+    (4, 'chifubu', 5, 'stock_in', 35, 2),
+    (5, 'chifubu', 6, 'stock_in', 24, 2);
 
 -- Ndeke, Masala, Kansenshi — lighter seed sets
 INSERT INTO products (branch_id, name, category, unit_of_measure, current_quantity, low_stock_threshold, expiry_alert_days) VALUES
@@ -113,3 +165,10 @@ INSERT INTO products (branch_id, name, category, unit_of_measure, current_quanti
 -- One batch per product above, so current_quantity matches its batches
 -- (as stock-in would have created them). Green Tea expires in 4 days on
 -- purpose: the ML forecast should flag part of it as at risk of expiring unsold.
+INSERT INTO stock_batches (product_id, quantity_received, quantity_remaining, expiry_date, received_date, barcode)
+SELECT id, current_quantity, current_quantity,
+       CASE name WHEN 'Green Tea 100 Bags' THEN DATE_ADD(CURDATE(), INTERVAL 4 DAY)
+                 WHEN 'Protein Powder 2kg' THEN DATE_ADD(CURDATE(), INTERVAL 150 DAY)
+                 ELSE NULL END,
+       DATE_SUB(CURDATE(), INTERVAL 21 DAY), ''
+FROM products WHERE branch_id IN ('ndeke', 'masala', 'kansenshi');

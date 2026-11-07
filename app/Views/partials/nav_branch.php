@@ -7,6 +7,10 @@ $isManager = $user['role'] === 'manager';
   <a class="navbar-brand" href="<?= $base ?>">Stockwise <span class="text-faint fw-normal">| <?= e($branch['name']) ?></span></a>
   <div class="navbar-nav flex-row gap-3 ms-4 flex-wrap">
     <a class="nav-link <?= $active === 'overview' ? 'active' : '' ?>" href="<?= $base ?>">Overview</a>
+    <?php if (!$isManager): ?>
+      <a class="nav-link <?= $active === 'stock' ? 'active' : '' ?>" href="/branch_stock.php?branch=<?= urlencode($branch['id']) ?>">Stock Management</a>
+    <?php endif; ?>
+    <a class="nav-link <?= $active === 'inventory' ? 'active' : '' ?>" href="/branch_inventory.php?branch=<?= urlencode($branch['id']) ?>">Full Inventory</a>
   </div>
   <div class="ms-auto d-flex align-items-center gap-3">
     <?php if ($isManager): ?><a href="/dashboard.php" class="text-faint small">&larr; All branches</a><?php endif; ?>

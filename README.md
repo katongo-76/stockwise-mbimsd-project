@@ -1,18 +1,19 @@
-# Stockwise (MBIMSD) v0.1: Sprint 1: authentication and access control
+# Stockwise (MBIMSD) v0.2: Sprint 2: stock movements by batch
 
 Multi-Branch Inventory Management System and Dashboard. Final year project, Bachelor of Information Technology,
 Zambia University College of Technology. Author: Katongo K. Mwansa.
 
-> This is a staged snapshot of the system at the end of Sprint 1. The complete system is version **v1.0**.
+> This is a staged snapshot of the system at the end of Sprint 2. The complete system is version **v1.0**.
 
 ## What this version contains
 
-- Login by email and password; passwords stored as bcrypt hashes; session renewed at login, 30-minute idle timeout
-- General Manager sign-up that creates the company and its branches, each with a 7-character join code
-- Branch Staff sign-up with a branch join code
-- Role-based access checked on the server for every page: Branch Staff see only their branch, the General Manager sees every branch of the company, read-only
-- Branch overview (stock totals and stock by category) and a basic all-branches page for the General Manager
-- Database: companies, branches, users and products, with demo data
+- Everything in v0.1, plus:
+- Product management (add, edit, delete) with a low-stock threshold and expiry alert window per product
+- Stock-in recorded as a batch with its own expiry date
+- Stock-out taken from the soonest-expiring batch first (FEFO), refused if there is not enough stock
+- Batch, product quantity and audit record saved in one database transaction, with row locking
+- Full Inventory page
+- Database: + stock_batches and transactions (audit trail)
 
 ## Setup with XAMPP
 

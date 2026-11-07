@@ -50,6 +50,15 @@ require __DIR__ . '/../app/Views/partials/nav_branch.php';
     </div>
   </div>
 
+  <div class="row g-3">
+    <div class="col-md-4">
+      <a href="/branch_inventory.php?branch=<?= urlencode($branchId) ?>" class="card-stockwise p-3 d-block text-decoration-none text-reset h-100">
+        <div class="fw-semibold mb-2">Full Inventory</div>
+        <p class="text-faint small">Complete breakdown of all products with stock counts and reorder status.</p>
+        <div class="pt-2 border-top" style="border-color:#50E3A440!important"><span class="fs-5 fw-semibold" style="color:var(--green)"><?= fmt($totalStock) ?></span><span class="text-faint small ms-2">total units</span></div>
+      </a>
+    </div>
+  </div>
 </div>
 
 <script>
