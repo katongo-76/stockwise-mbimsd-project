@@ -1,0 +1,15 @@
+feature,importance
+same_dow_ratio,0.1334
+day_of_month,0.1307
+payday_ratio,0.1293
+trend_ratio,0.1171
+std28_ratio,0.1128
+dow,0.1007
+month,0.0968
+mean14_ratio,0.0473
+is_payday,0.039
+mean7_ratio,0.0364
+h,0.0171
+is_weekend,0.0164
+last_ratio,0.0136
+is_december,0.0095

@@ -1,0 +1,43 @@
+id,requirement,test,expected,actual,result
+TC-01,FR-I,Unauthenticated user opens the dashboard,Redirect to login,302 -> /login.php,Pass
+TC-02,FR-I,General Manager logs in with valid credentials,Redirect to dashboard,302 -> /dashboard.php,Pass
+TC-03,NFR-I,Session identifier is regenerated at login,New session id,changed,Pass
+TC-04,FR-I,Login with a wrong password,"Rejected, stays on login","200, error shown=True",Pass
+TC-05,NFR-I,SQL injection attempts in the login form,Both rejected,"200/200, redirects: - / -",Pass
+TC-06,FR-I,Branch Staff logs in,Redirect to own branch (Chifubu),302 -> /branch.php?branch=chifubu,Pass
+TC-07,FR-II,Branch Staff edits the URL to open another branch's pages (5 pages),All redirected to own branch,none leaked,Pass
+TC-08,FR-II,Branch Staff opens the General Manager dashboard,Redirected away,302 -> /branch.php?branch=chifubu,Pass
+TC-09,FR-VIII,General Manager dashboard lists every company branch,4 branches shown,4 shown,Pass
+TC-10,FR-II,General Manager attempts a stock-out (read-only role),Refused; quantity unchanged,quantity 24 -> 24,Pass
+TC-11,FR-III,General Manager registers a company with 2 branches,"Company + 2 branches, unique 7-character codes","2 branches, codes ['FHT1J94', 'OBG6YH1']",Pass
+TC-12,FR-II,Second company's General Manager opens the demo company's branch,Access denied (404),404,Pass
+TC-13,FR-III,"Branch Staff registers with a valid code, then with an invalid code",Valid: joins branch; invalid: rejected,valid 302 -> /branch.php?branch=test-traders-1793944301-branch-1; invalid 200,Pass
+TC-14,NFR-I,"Stored password is a hash, not plain text",bcrypt hash ($2y$...),$2y$10$...,Pass
+TC-15,FR-IV,Branch Staff adds a product,"Product saved with threshold 10, quantity 0","saved, qty 0",Pass
+TC-16,FR-V,Two stock-ins with different expiry dates,Quantity 50; 2 batches; 2 audit rows,"quantity 50, batches [20, 30], audit rows 2",Pass
+TC-17,FR-V,Stock-out of 25 (soonest batch holds 20),Soonest batch emptied first: 0 and 25 left; quantity 25,batches 0 and 25; quantity 25,Pass
+TC-18,NFR-III,Updated quantity shown on the page returned by the stock-out,New quantity visible in same response,"response 13 ms, shows 25: True",Pass
+TC-19,FR-V,Stock-out larger than stock on hand,Rejected; nothing changes,"quantity 25, batches [0, 25]",Pass
+TC-20,NFR-I,Stock-out submitted without the anti-forgery token,HTTP 400; quantity unchanged,"400, quantity 25",Pass
+TC-21,NFR-II,Every product's quantity equals the sum of its batches,0 mismatches,0 mismatches,Pass
+TC-22,NFR-I,Product name containing a script tag,Displayed as text (escaped),escaped,Pass
+TC-23,FR-VI,Expiry page classifies batches,Ibuprofen expired; Almond Milk expiring soon,"expired label=True, Ibuprofen listed=True",Pass
+TC-24,FR-VII,Stock-out leaves a product below its threshold,Low-stock alert logged for branch Branch Staff,1 new alert(s),Pass
+TC-25,FR-VII,Daily alert sweep,Branch digest(s) and a General Manager summary logged,Alert sweep complete for 2 company(ies). digests=2 summaries=2,Pass
+TC-26,NFR-III,Nightly forecast job run time,Completes within 5 minutes,"2.8 s, exit 0",Pass
+TC-41,FR-IX,"Nightly job uses the saved, trained model file",Loads ml/model/demand_model.joblib; forecasts made with random_forest,"loaded=True, models used ['no_history', 'random_forest']",Pass
+TC-27,FR-IX,Forecast rows written,14 daily forecasts for every product,252 rows for 18 of 18 products,Pass
+TC-28,FR-X,"Almond Milk (24 packs on hand, several sold a day)","Runs out within the 5-day lead time: status critical, order suggested","days left 2.7, status critical, order 144",Pass
+TC-29,FR-X,Ibuprofen (all 40 units expired),Sellable quantity 0; stockout now,"sellable 0, days left 0.0",Pass
+TC-30,FR-X,Green Tea batch expiring in 4 days,Part of the batch flagged as at risk,18 of 42 at risk,Pass
+TC-31,FR-IX,Products with almost no history,Fall back to the moving average or 'no history',"no_history, no_history",Pass
+TC-32,FR-X,Forecast page and dashboard show forecast figures,Forecast table on branch page; warnings on dashboard,"200/200, table=True, dashboard=True",Pass
+TC-33,NFR-V,Trained model vs 7-day moving average on the held-out test set,Lower MAE than the baseline,"random forest 3.26 vs moving average 3.51 (17,472 test rows)",Pass
+TC-34,NFR-IV,"10 concurrent users, 20 page loads each (200 requests)",No errors; median under 1 s,"errors 0, median 127 ms, 95th pct 268 ms (single user median 17 ms), 58.1 req/s",Pass
+TC-35,FR-VI,Stock-out of a product whose only stock has expired (D1),Rejected; quantity unchanged,"quantity 40 -> 40, message shown=True",Pass
+TC-36,FR-VI/NFR-II,Branch Staff writes off the expired batch on the Expiry page,"Batch emptied; quantity reduced; recorded as adjustment, not a sale","quantity 40 -> 0, adjustments +1, sales +0",Pass
+TC-37,FR-II/NFR-II,General Manager submits the former 'clear inventory' action (D2),No effect; branch stock unchanged,Kansenshi stock 147.0 -> 147.0,Pass
+TC-38,FR-VII,Threshold 10: 25 -> 9 -> 7 -> 8 -> 18 -> 9 (D3),Alert only on each crossing below 10: 2 alerts,"alerts after each step [0, 1, 1, 1, 1, 2]",Pass
+TC-39,FR-VIII,"Dashboard shows per-branch out-of-stock, low-stock, expiring and expired counts (D4)",All four counts on every card; totals match the database,"shown {'Out of stock': 1, 'Low stock': 1, 'Expiring soon': 3, 'Expired': 1}; database out 1, expired 1",Pass
+TC-40,FR-VII,Alert logged while no mail server is configured (D5),Status 'not_sent',status not_sent,Pass
+TC-42,FR-III,"General Manager adds, edits and deletes a branch; tries to delete another company's branch","Own branch created, renamed and deleted; other company's branch untouched","created=True, renamed=True, deleted=True, other company's branch kept=True",Pass

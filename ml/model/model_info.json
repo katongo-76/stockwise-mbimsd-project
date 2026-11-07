@@ -1,0 +1,48 @@
+{
+  "model": "RandomForestRegressor (scikit-learn), global model for all products",
+  "trained_at": "2026-11-06 07:34",
+  "dataset": "ml/dataset/training_dataset.csv",
+  "data_from": "2025-08-09",
+  "data_to": "2026-11-01",
+  "rows": 97664,
+  "products": 16,
+  "features": [
+    "h",
+    "dow",
+    "is_weekend",
+    "day_of_month",
+    "is_payday",
+    "month",
+    "is_december",
+    "mean7_ratio",
+    "mean14_ratio",
+    "trend_ratio",
+    "last_ratio",
+    "same_dow_ratio",
+    "std28_ratio",
+    "payday_ratio"
+  ],
+  "target": "target_ratio = units sold on target_date / product's 28-day average (scale)",
+  "settings": {
+    "n_estimators": 200,
+    "min_samples_leaf": 20,
+    "max_features": 0.5,
+    "random_state": 42
+  },
+  "test": {
+    "test_days": 91,
+    "split_date": "2026-08-03",
+    "train_rows": 78736,
+    "test_rows": 17472,
+    "random_forest": {
+      "mae_units_per_day": 3.26,
+      "error_14_day_total": 14.46
+    },
+    "baseline_7_day_average": {
+      "mae_units_per_day": 3.509,
+      "error_14_day_total": 22.97
+    },
+    "improvement_daily_pct": 7.1,
+    "improvement_14_day_total_pct": 37.0
+  }
+}
