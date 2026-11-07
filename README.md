@@ -1,19 +1,16 @@
-# Stockwise (MBIMSD) v0.2: Sprint 2: stock movements by batch
+# Stockwise (MBIMSD) v0.3: Sprint 3: expiry tracking
 
 Multi-Branch Inventory Management System and Dashboard. Final year project, Bachelor of Information Technology,
 Zambia University College of Technology. Author: Katongo K. Mwansa.
 
-> This is a staged snapshot of the system at the end of Sprint 2. The complete system is version **v1.0**.
+> This is a staged snapshot of the system at the end of Sprint 3. The complete system is version **v1.0**.
 
 ## What this version contains
 
-- Everything in v0.1, plus:
-- Product management (add, edit, delete) with a low-stock threshold and expiry alert window per product
-- Stock-in recorded as a batch with its own expiry date
-- Stock-out taken from the soonest-expiring batch first (FEFO), refused if there is not enough stock
-- Batch, product quantity and audit record saved in one database transaction, with row locking
-- Full Inventory page
-- Database: + stock_batches and transactions (audit trail)
+- Everything in v0.2, plus:
+- Each batch classified as fresh, expiring soon or expired against the product's alert window
+- Expiry page with filters, and expiry status on the branch overview
+- Expired stock cannot be sold; Branch Staff write it off, recorded as an adjustment
 
 ## Setup with XAMPP
 

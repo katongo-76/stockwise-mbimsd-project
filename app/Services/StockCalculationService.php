@@ -125,6 +125,51 @@ class StockCalculationService
         return self::afterTransactionCheck($pdo, $productId, $branchId, (int)$row['current_quantity']);
     }
 
+    /**
+     * Write-off: removes the remaining units of an expired batch from stock,
+     * recorded as an 'adjustment' in the audit trail (not as a sale, so it
+     * does not count as demand in the forecast).
+     */
+    public static function writeOffExpiredBatch(PDO $pdo, int $batchId, string $branchId, ?int $performedBy): array
+    {
+        $pdo->beginTransaction();
+        try {
+            $stmt = $pdo->prepare(
+                'SELECT sb.id, sb.product_id, sb.quantity_remaining, sb.expiry_date, p.current_quantity
+                 FROM stock_batches sb JOIN products p ON p.id = sb.product_id
+                 WHERE sb.id = ? AND p.branch_id = ?
+                 FOR UPDATE'
+            );
+            $stmt->execute([$batchId, $branchId]);
+            $batch = $stmt->fetch();
+            if (!$batch) {
+                throw new RuntimeException('Batch not found.');
+            }
+            if (!$batch['expiry_date'] || $batch['expiry_date'] >= date('Y-m-d')) {
+                throw new RuntimeException('Only expired batches can be written off.');
+            }
+            $qty = (int)$batch['quantity_remaining'];
+            if ($qty <= 0) {
+                throw new RuntimeException('This batch has no units left.');
+            }
+
+            $pdo->prepare('UPDATE stock_batches SET quantity_remaining = 0 WHERE id = ?')->execute([$batchId]);
+            $pdo->prepare('UPDATE products SET current_quantity = current_quantity - ? WHERE id = ?')
+                ->execute([$qty, $batch['product_id']]);
+            $pdo->prepare(
+                'INSERT INTO transactions (product_id, branch_id, batch_id, type, quantity, performed_by) VALUES (?,?,?,\'adjustment\',?,?)'
+            )->execute([$batch['product_id'], $branchId, $batchId, $qty, $performedBy]);
+
+            $pdo->commit();
+        } catch (Throwable $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+
+        $result = self::afterTransactionCheck($pdo, (int)$batch['product_id'], $branchId, (int)$batch['current_quantity']);
+        $result['quantity'] = $qty;
+        return $result;
+    }
 
     /**
      * Checks the low-stock threshold right after a transaction (FR-V).

@@ -10,6 +10,7 @@ $isManager = $user['role'] === 'manager';
     <?php if (!$isManager): ?>
       <a class="nav-link <?= $active === 'stock' ? 'active' : '' ?>" href="/branch_stock.php?branch=<?= urlencode($branch['id']) ?>">Stock Management</a>
     <?php endif; ?>
+    <a class="nav-link <?= $active === 'expiry' ? 'active' : '' ?>" href="/branch_expiry.php?branch=<?= urlencode($branch['id']) ?>">Expiry</a>
     <a class="nav-link <?= $active === 'inventory' ? 'active' : '' ?>" href="/branch_inventory.php?branch=<?= urlencode($branch['id']) ?>">Full Inventory</a>
   </div>
   <div class="ms-auto d-flex align-items-center gap-3">
