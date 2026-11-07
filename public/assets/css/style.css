@@ -1,0 +1,92 @@
+/* Fonts are bundled in assets/vendor/fonts so the app works with no internet connection.
+   Both are variable fonts: one file covers every weight used (300-700). SIL Open Font License. */
+@font-face {
+  font-family: 'DM Sans';
+  src: url('../vendor/fonts/DMSans-Variable.ttf') format('truetype');
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../vendor/fonts/JetBrainsMono-Variable.ttf') format('truetype');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #0b0d14;
+  --panel: #131621;
+  --border: #1e2235;
+  --border-2: #2a2e45;
+  --text: #e8eaf2;
+  --text-dim: #9ca3af;
+  --text-faint: #6b7280;
+  --blue: #4F8EF7;
+  --green: #50E3A4;
+  --orange: #F5A623;
+  --red: #FF6B6B;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+}
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+.navbar-stockwise {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.navbar-stockwise .nav-link {
+  color: var(--text-faint);
+  font-size: .8rem;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+}
+.navbar-stockwise .nav-link.active {
+  color: var(--text);
+  border-bottom-color: var(--blue);
+}
+.navbar-stockwise .navbar-brand { color: var(--text); font-weight: 600; }
+
+.card-stockwise {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.stat-card { border-top: 2px solid var(--blue); }
+.stat-label { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); }
+.stat-value { font-size: 1.9rem; font-weight: 600; }
+
+.table-stockwise {
+  --bs-table-bg: var(--panel);
+  --bs-table-color: var(--text);
+  --bs-table-border-color: var(--border);
+}
+.table-stockwise th {
+  font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); font-weight: 500;
+}
+
+.form-control, .form-select {
+  background: var(--bg); border: 1px solid var(--border-2); color: var(--text);
+}
+.form-control:focus, .form-select:focus {
+  background: var(--bg); color: var(--text); border-color: var(--blue); box-shadow: 0 0 0 .2rem rgba(79,142,247,.25);
+}
+.form-label { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); }
+
+.badge-fresh   { background: color-mix(in srgb, var(--green) 20%, transparent); color: var(--green); }
+.badge-warning { background: color-mix(in srgb, var(--orange) 20%, transparent); color: var(--orange); }
+.badge-expired { background: color-mix(in srgb, var(--red) 20%, transparent); color: var(--red); }
+.badge-none    { background: var(--border); color: var(--text-faint); }
+
+.dot { display:inline-block; width:10px; height:10px; border-radius:2px; }
+.dot-round { border-radius: 50%; }
+
+a { color: var(--blue); }
+.text-faint { color: var(--text-faint) !important; }
+.text-dim { color: var(--text-dim) !important; }
+.btn-success { color: #0b0d14; font-weight: 600; }
