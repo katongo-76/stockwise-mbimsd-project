@@ -186,7 +186,10 @@ class StockCalculationService
 
         $lowStock = $product && $product['current_quantity'] <= $product['low_stock_threshold'];
         $crossed = $lowStock && $quantityBefore !== null && $quantityBefore > $product['low_stock_threshold'];
+        if ($crossed) {
+            NotificationService::dispatchLowStockAlert($pdo, $product, $branchId);
+        }
 
-        return ['product' => $product, 'lowStock' => $lowStock, 'alertSent' => false];
+        return ['product' => $product, 'lowStock' => $lowStock, 'alertSent' => $crossed];
     }
 }

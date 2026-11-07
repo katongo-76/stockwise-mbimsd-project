@@ -1,16 +1,18 @@
-# Stockwise (MBIMSD) v0.3: Sprint 3: expiry tracking
+# Stockwise (MBIMSD) v0.4: Sprint 4: alerts and notifications
 
 Multi-Branch Inventory Management System and Dashboard. Final year project, Bachelor of Information Technology,
 Zambia University College of Technology. Author: Katongo K. Mwansa.
 
-> This is a staged snapshot of the system at the end of Sprint 3. The complete system is version **v1.0**.
+> This is a staged snapshot of the system at the end of Sprint 4. The complete system is version **v1.0**.
 
 ## What this version contains
 
-- Everything in v0.2, plus:
-- Each batch classified as fresh, expiring soon or expired against the product's alert window
-- Expiry page with filters, and expiry status on the branch overview
-- Expired stock cannot be sold; Branch Staff write it off, recorded as an adjustment
+- Everything in v0.3, plus:
+- Low-stock email alert (PHPMailer over SMTP) when a stock movement takes a product down to its threshold
+- Daily summary job (cron/check_alerts.php): one email per branch and one for the General Manager
+- Notification log with status sent / failed / not sent
+- Low Stock page
+- Database: + notifications
 
 ## Setup with XAMPP
 

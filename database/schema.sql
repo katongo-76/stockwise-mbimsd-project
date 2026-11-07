@@ -95,6 +95,23 @@ CREATE TABLE IF NOT EXISTS transactions (
     INDEX idx_transactions_product_date (product_id, type, created_at)
 );
 
+-- ────────────────────────────────────────────────────────────────
+-- Notifications — log of every SMTP alert dispatched (FR-V, FR-VIII).
+-- ────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS notifications (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    branch_id  VARCHAR(64) NULL,
+    type       ENUM('low_stock', 'expiry', 'branch_digest', 'manager_summary') NOT NULL,
+    recipient  VARCHAR(255) NOT NULL,
+    subject    VARCHAR(255) NOT NULL,
+    message    TEXT NOT NULL,
+    status     ENUM('sent', 'failed', 'not_sent') NOT NULL DEFAULT 'sent',   -- not_sent = no mail server configured
+    sent_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
+    FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE
+);
+
 -- ════════════════════════════════════════════════════════════════
 -- SEED DATA
 -- ════════════════════════════════════════════════════════════════

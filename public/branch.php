@@ -83,6 +83,13 @@ require __DIR__ . '/../app/Views/partials/nav_branch.php';
       </a>
     </div>
     <div class="col-md-4">
+      <a href="/branch_alerts.php?branch=<?= urlencode($branchId) ?>" class="card-stockwise p-3 d-block text-decoration-none text-reset h-100">
+        <div class="fw-semibold mb-2">Low Stock Alerts</div>
+        <p class="text-faint small">Products ranked by urgency against their reorder thresholds.</p>
+        <div class="pt-2 border-top" style="border-color:#FF6B6B40!important"><span class="fs-5 fw-semibold" style="color:var(--red)"><?= count($lowStockItems) ?></span><span class="text-faint small ms-2">below threshold</span></div>
+      </a>
+    </div>
+    <div class="col-md-4">
       <a href="/branch_inventory.php?branch=<?= urlencode($branchId) ?>" class="card-stockwise p-3 d-block text-decoration-none text-reset h-100">
         <div class="fw-semibold mb-2">Full Inventory</div>
         <p class="text-faint small">Complete breakdown of all products with stock counts and reorder status.</p>

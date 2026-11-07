@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = StockCalculationService::writeOffExpiredBatch($pdo, (int)($_POST['batch_id'] ?? 0), $branchId, $user['id']);
         $notice = "Written off {$result['quantity']} expired unit(s) of {$result['product']['name']}; "
             . "{$result['product']['name']} now at {$result['product']['current_quantity']}."
-           ;
+            . ($result['alertSent'] ? ' Low-stock alert sent.' : '');
     } catch (Throwable $e) {
         $error = $e->getMessage();
     }

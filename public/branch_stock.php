@@ -83,7 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$product) throw new RuntimeException('Select a product.');
             $result = StockCalculationService::recordStockOut($pdo, $product['id'], $branchId, (int)$_POST['quantity'], $user['id']);
             $notice = "Stock-out recorded. {$result['product']['name']} now at {$result['product']['current_quantity']}."
-                . ($result['lowStock'] ? ' ⚠ Now at or below its low-stock threshold.' : '');
+                . ($result['alertSent'] ? ' ⚠ Now at or below its threshold: low-stock alert sent.'
+                   : ($result['lowStock'] ? ' Still at or below its low-stock threshold.' : ''));
             $tab = 'out';
         }
     } catch (Throwable $e) {
