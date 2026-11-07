@@ -1,0 +1,5 @@
+model,mae,rmse,bias,mae_days_1_7,mae_days_8_14,mae_14_day_total,vs_baseline_pct,label
+holt_winters,3.317,4.855,-0.025,3.308,3.326,15.666,-7.217,"Holt-Winters (damped trend, weekly season)"
+random_forest,3.336,4.872,0.071,3.305,3.367,15.6,-6.681,"Random forest (global, calendar + recent-sales features)"
+moving_average,3.575,5.231,0.004,3.561,3.589,23.295,0.0,7-day moving average (baseline)
+seasonal_naive,4.501,6.639,0.004,4.488,4.513,23.295,25.892,Same weekday last week (baseline)

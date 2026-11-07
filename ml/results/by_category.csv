@@ -1,0 +1,7 @@
+category,holt_winters,random_forest,moving_average,seasonal_naive
+Apparel,3.954,3.879,4.339,5.209
+Electronics,2.969,2.924,3.135,4.028
+Food & Beverage,2.987,2.999,3.289,4.039
+Health,5.51,5.867,5.884,7.746
+Sporting Goods,1.71,1.704,1.782,2.329
+Tools,1.689,1.687,1.804,2.271

@@ -1,16 +1,18 @@
-# Stockwise (MBIMSD) v0.5: Sprint 5: General Manager dashboard
+# Stockwise (MBIMSD) v0.6: Sprint 7: forecasting research
 
 Multi-Branch Inventory Management System and Dashboard. Final year project, Bachelor of Information Technology,
 Zambia University College of Technology. Author: Katongo K. Mwansa.
 
-> This is a staged snapshot of the system at the end of Sprint 5. The complete system is version **v1.0**.
+> This is a staged snapshot of the system at the end of Sprint 7. The complete system is version **v1.0**.
 
 ## What this version contains
 
-- Everything in v0.4, plus:
-- Dashboard card per branch: out of stock, low stock, expiring soon and expired counts, total stock and a status label
-- Branch management for the General Manager (add, edit, delete branches)
-- Stock movement trends per branch
+- Everything in v0.5, plus the `ml/` folder (Python):
+- Sales history generator with weekly, payday, December and trend patterns (`generate_history.py`)
+- Four forecasting methods: 7-day moving average, same weekday last week, Holt-Winters and a global random forest (`models.py`)
+- Rolling-origin comparison of the methods (`evaluate_models.py`, results in `ml/results/`)
+- Stock calculations: safety stock, reorder point, suggested order, stockout replay (`inventory.py`)
+- Unit tests (`ml/tests/test_ml.py`)
 
 ## Setup with XAMPP
 
